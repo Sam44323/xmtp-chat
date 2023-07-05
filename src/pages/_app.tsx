@@ -16,10 +16,10 @@ export default function App({ Component, pageProps }: AppProps) {
     data: null,
   });
 
-  const contextSetter = (data: any, key: string) => {
+  const contextSetter = (data: any) => {
     setContextState((prevState) => ({
       ...prevState,
-      [key]: data,
+      ...data,
     }));
   };
 

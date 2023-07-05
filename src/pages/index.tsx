@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useContext } from "react";
 import styles from "@/styles/Home.module.css";
 import { Button } from "reactstrap";
 import { useWalletLogin, useActiveProfile } from "@lens-protocol/react-web";
+import { LensContext } from "@/core/context";
 import { useAccount, useConnect, useDisconnect, useSigner } from "wagmi";
 import { InjectedConnector } from "wagmi/connectors/injected";
 
@@ -11,6 +12,8 @@ export default function Home() {
     error: loginError,
     isPending: isLoginPending,
   } = useWalletLogin();
+
+  const lensContext = useContext(LensContext);
 
   const { data } = useActiveProfile();
   const { data: signerData } = useSigner();
@@ -25,6 +28,11 @@ export default function Home() {
   const onLoginWithMetamaskClick = async () => {
     if (isConnected) {
       await disconnectAsync();
+      lensContext.onSetData({
+        signer: null,
+        handle: null,
+        data: null,
+      });
       return;
     }
 
@@ -32,16 +40,17 @@ export default function Home() {
 
     if (connector instanceof InjectedConnector) {
       const signer = await connector.getSigner();
-      console.log(signer);
-      const response = await loginLens(signer);
-      console.log(response);
+      await loginLens(signer);
     }
   };
 
   React.useEffect(() => {
-    console.log(data);
     if (data) {
-      console.log(signerData);
+      lensContext.onSetData({
+        signer: signerData,
+        handle: data.handle,
+        data: data,
+      });
     }
   }, [data]);
 
@@ -56,8 +65,14 @@ export default function Home() {
       "
       >
         <h1 className={styles.title}>XMTP Chat</h1>
-        <Button color="primary" onClick={onLoginWithMetamaskClick}>
-          Connect Wallet
+        <Button
+          color="primary"
+          onClick={onLoginWithMetamaskClick}
+          style={{
+            width: "180px",
+          }}
+        >
+          {isConnected ? "Disconnect" : "Connect"}
         </Button>
       </section>
     </div>

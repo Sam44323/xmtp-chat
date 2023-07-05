@@ -5,5 +5,5 @@ export const LensContext = React.createContext({
   signer: null,
   handle: null,
   data: null,
-  onSetData: (data: any, key: string) => {},
+  onSetData: (data: any) => {},
 });
