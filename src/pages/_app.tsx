@@ -5,8 +5,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { LensProvider } from "@lens-protocol/react-web";
 import { LensContext } from "@/core/context";
 import { lensConfig } from "@/configs/lens";
-import { WagmiConfig } from "wagmi";
 import { wagmiClient } from "@/configs/wagmi";
+import { WagmiConfig } from "wagmi";
 
 export default function App({ Component, pageProps }: AppProps) {
   const [contextState, setContextState] = React.useState({
