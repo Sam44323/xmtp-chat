@@ -48,10 +48,14 @@ export default function Home() {
       const xmtp = await Client.create(signerData!, {
         env: "production",
       });
+      console.log({
+        xmtp,
+      });
       lensContext.onSetData({
         signer: signerData,
         handle: data.handle,
-        data: { ...data, xmtp },
+        xmtp,
+        data: data,
       });
     };
 
