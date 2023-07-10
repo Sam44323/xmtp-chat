@@ -9,25 +9,17 @@ import {
 import { LensContext } from "@/core/context";
 import { useAccount, useConnect, useDisconnect, useSigner } from "wagmi";
 import { InjectedConnector } from "wagmi/connectors/injected";
+import { Client } from "@xmtp/xmtp-js";
 
 export default function Home() {
-  const {
-    execute: loginLens,
-    error: loginError,
-    isPending: isLoginPending,
-  } = useWalletLogin();
-
+  const { execute: loginLens } = useWalletLogin();
   const { execute: logoutLens } = useWalletLogout();
-
   const lensContext = useContext(LensContext);
-
   const { data } = useActiveProfile();
   const { data: signerData } = useSigner();
-
   const { isConnected } = useAccount();
   const { disconnectAsync } = useDisconnect();
-
-  const { connectAsync, data: walletData } = useConnect({
+  const { connectAsync } = useConnect({
     connector: new InjectedConnector(),
   });
 
@@ -52,17 +44,24 @@ export default function Home() {
   };
 
   React.useEffect(() => {
-    if (data) {
+    const dataSetter = async (data: any) => {
+      const xmtp = await Client.create(signerData!, {
+        env: "production",
+      });
       lensContext.onSetData({
         signer: signerData,
         handle: data.handle,
-        data: data,
+        data: { ...data, xmtp },
       });
+    };
+
+    if (data) {
+      dataSetter(data);
     }
   }, [data]);
 
   console.log({
-    isConnected,
+    lensContext,
   });
 
   return (

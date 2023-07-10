@@ -13,6 +13,7 @@ export default function App({ Component, pageProps }: AppProps) {
     wagmiClient: null,
     signer: null,
     handle: null,
+    xmtp: null,
     data: null,
   });
 
