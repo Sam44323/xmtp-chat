@@ -1,7 +1,11 @@
 import React, { useContext } from "react";
 import styles from "@/styles/Home.module.css";
 import { Button } from "reactstrap";
-import { useWalletLogin, useActiveProfile } from "@lens-protocol/react-web";
+import {
+  useWalletLogin,
+  useActiveProfile,
+  useWalletLogout,
+} from "@lens-protocol/react-web";
 import { LensContext } from "@/core/context";
 import { useAccount, useConnect, useDisconnect, useSigner } from "wagmi";
 import { InjectedConnector } from "wagmi/connectors/injected";
@@ -12,6 +16,8 @@ export default function Home() {
     error: loginError,
     isPending: isLoginPending,
   } = useWalletLogin();
+
+  const { execute: logoutLens } = useWalletLogout();
 
   const lensContext = useContext(LensContext);
 
@@ -28,6 +34,7 @@ export default function Home() {
   const onLoginWithMetamaskClick = async () => {
     if (isConnected) {
       await disconnectAsync();
+      logoutLens();
       lensContext.onSetData({
         signer: null,
         handle: null,
@@ -45,6 +52,9 @@ export default function Home() {
   };
 
   React.useEffect(() => {
+    console.log({
+      data,
+    });
     if (data) {
       lensContext.onSetData({
         signer: signerData,
@@ -53,6 +63,10 @@ export default function Home() {
       });
     }
   }, [data]);
+
+  console.log({
+    isConnected,
+  });
 
   return (
     <div>
