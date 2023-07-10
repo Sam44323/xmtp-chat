@@ -27,7 +27,7 @@ export default function Home() {
   const { isConnected } = useAccount();
   const { disconnectAsync } = useDisconnect();
 
-  const { connectAsync } = useConnect({
+  const { connectAsync, data: walletData } = useConnect({
     connector: new InjectedConnector(),
   });
 
@@ -52,9 +52,6 @@ export default function Home() {
   };
 
   React.useEffect(() => {
-    console.log({
-      data,
-    });
     if (data) {
       lensContext.onSetData({
         signer: signerData,
@@ -85,6 +82,7 @@ export default function Home() {
           style={{
             width: "180px",
           }}
+          suppressHydrationWarning
         >
           {isConnected ? "Disconnect" : "Connect"}
         </Button>
