@@ -9,7 +9,7 @@ import {
 import { LensContext } from "@/core/context";
 import { useAccount, useConnect, useDisconnect, useSigner } from "wagmi";
 import { InjectedConnector } from "wagmi/connectors/injected";
-import { Client } from "@xmtp/xmtp-js";
+import { Client, Conversation } from "@xmtp/xmtp-js";
 
 export default function Home() {
   const { execute: loginLens } = useWalletLogin();
@@ -22,6 +22,10 @@ export default function Home() {
   const { connectAsync } = useConnect({
     connector: new InjectedConnector(),
   });
+
+  const [userConversations, setUserConversations] = React.useState<
+    Conversation[]
+  >([] as Conversation[]);
 
   const onLoginWithMetamaskClick = async () => {
     if (isConnected) {
@@ -48,9 +52,7 @@ export default function Home() {
       const xmtp = await Client.create(signerData!, {
         env: "production",
       });
-      console.log({
-        xmtp,
-      });
+      setUserConversations(await xmtp.conversations.list());
       lensContext.onSetData({
         signer: signerData,
         handle: data.handle,
@@ -63,10 +65,6 @@ export default function Home() {
       dataSetter(data);
     }
   }, [data]);
-
-  console.log({
-    lensContext,
-  });
 
   return (
     <div>
