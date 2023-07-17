@@ -49,8 +49,10 @@ export default function Home() {
 
   React.useEffect(() => {
     const dataSetter = async (data: any) => {
+      if (!signerData) return;
+      if (lensContext.xmtp) return;
       const xmtp = await Client.create(signerData!, {
-        env: "production",
+        env: "dev",
       });
       setUserConversations(await xmtp.conversations.list());
       lensContext.onSetData({
@@ -87,6 +89,21 @@ export default function Home() {
         >
           {isConnected ? "Disconnect" : "Connect"}
         </Button>
+      </section>
+      <section>
+        <div className="d-flex flex-column justify-content-center">
+          {userConversations.map((conversation, index) => {
+            return (
+              <div
+                className="d-flex flex-column justify-content-center 
+                "
+                key={index}
+              >
+                <p>{conversation.peerAddress}</p>
+              </div>
+            );
+          })}
+        </div>
       </section>
     </div>
   );
